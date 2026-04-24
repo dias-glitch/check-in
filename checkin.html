@@ -3,101 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>チェックインフォーム</title>
+  <title>Smart Check-in</title>
 
-  <!-- jQuery & Select2 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <!-- Select2 i18n -->
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/ja.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/zh-CN.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/ko.js"></script>
 
   <style>
+    :root {
+      --primary-color: #2563eb;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #64748b;
+      --border-color: #e2e8f0;
+    }
+
     body {
       margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-      background-color: #f0f2f5;
+      padding: 20px 10px;
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
       display: flex;
       justify-content: center;
-      align-items: center;
       min-height: 100vh;
     }
 
-    .checkin-box {
-      background-color: white;
-      padding: 30px 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    .checkin-container {
+      background-color: var(--card-bg);
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       width: 100%;
-      max-width: 420px;
-      box-sizing: border-box;
+      max-width: 480px;
       position: relative;
+      align-self: center;
     }
 
-    .language-select {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      display 8px;
+    .language-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
       align-items: center;
-      font-size: 12px;
     }
 
-    .language-select select{
-      font-size: 12px;
-      padding: 2px 6px;
+    .language-header select {
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 5px 15px;
+      font-size: 13px;
+      background: white;
+      outline: none;
     }
+
     h2 {
       text-align: center;
-      margin-bottom: 20px;
+      font-size: 1.5rem;
+      margin-bottom: 30px;
     }
+
+    #guestInfo {
+      background-color: #f1f5f9;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      font-size: 14px;
+      line-height: 1.8;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    #guestInfo p { margin: 0; display: flex; justify-content: space-between; }
+    #guestInfo strong { color: var(--text-sub); font-weight: normal; }
+
+    .form-group { margin-bottom: 20px; }
 
     label {
       display: block;
-      margin-top: 15px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 8px;
     }
+
+    label i { margin-right: 8px; color: var(--primary-color); width: 16px; text-align: center; }
 
     input, select {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+      padding: 12px 15px;
       font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
       box-sizing: border-box;
+      background-color: #fff;
     }
 
     button {
       width: 100%;
-      background-color: blue;
+      background-color: var(--primary-color);
       color: white;
-      padding: 12px;
-      font-size: 16px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 700;
       border: none;
-      border-radius: 5px;
-      margin-top: 25px;
+      border-radius: 8px;
+      margin-top: 30px;
       cursor: pointer;
     }
 
-    button:hover {
-      background-color: darkblue;
-    }
-
-    #message {
-      text-align: center;
-      margin-top: 15px;
-      color: green;
-      font-size: 14px;
-    }
+    #message { text-align: center; margin-top: 20px; font-weight: bold; }
   </style>
 </head>
 <body>
-  <div class="checkin-box">
-    <div class="language-select">
-      🌐
+  <div class="checkin-container">
+    <div class="language-header">
+      <i class="fa-solid fa-globe" style="margin-right: 8px;"></i>
       <select id="languageSelect" onchange="setLanguage(this.value)">
         <option value="ja">日本語</option>
         <option value="en">English</option>
@@ -108,366 +130,393 @@
       </select>
     </div>
 
-    <h2 id="formTitle">チェックイン情報</h2>
-    <div id="guestInfo">読み込み中...</div>
+    <h2 id="formTitle">Check-in</h2>
+    
+    <div id="guestInfo">Loading...</div>
 
     <form id="checkinForm">
-      <label id="labelDob">生年月日:</label>
-      <input type="date" name="dob" required>
+      <div class="form-group">
+        <label id="labelDob">生年月日:</label>
+        <input type="date" name="dob" required>
+      </div>
 
-      <label id="labelGender">性別:</label>
-      <select name="gender" id="genderSelect" required>
-        <option value="">{emptyGender}</option>
-        <option value="M" data-i18n-option="genderMale">男性</option>
-        <option value="F" data-i18n-option="genderFemale">女性</option>
-        <option value="Other" data-i18n-option="genderOther">その他</option>
-      </select>
+      <div class="form-group">
+        <label id="labelGender">性別:</label>
+        <select name="gender" id="genderSelect" required>
+          <option value="">Select</option>
+          <option value="M" data-i18n-option="genderMale">男性</option>
+          <option value="F" data-i18n-option="genderFemale">女性</option>
+          <option value="Other" data-i18n-option="genderOther">その他</option>
+        </select>
+      </div>
 
-      <label id="labelNationality">国籍:</label>
-      <select name="nationality" id="nationalitySelect" required>
-        <option value="">{emptyNationality}</option>
-        <option value="Japan" data-i18n-option="countryJapan">Japan</option>
-        <option value="USA" data-i18n-option="countryUSA">USA</option>
-        <option value="China" data-i18n-option="countryChina">China</option>
-        <option value="Germany" data-i18n-option="countryGermany">Germany</option>
-        <option value="France" data-i18n-option="countryFrance">France</option>
-        <option value="Taiwan" data-i18n-option="countryTaiwan">Taiwan</option>
-        <option value="South Korea" data-i18n-option="countryKorea">South Korea</option>
-        <option value="Italy" data-i18n-option="countryItaly">Italy</option>
-        <option value="Switzerland" data-i18n-option="countrySwitzerland">Switzerland</option>
-        <option value="Russia" data-i18n-option="countryRussia">Russia</option>
-        <option value="Thailand" data-i18n-option="countryThailand">Thailand</option>
-        <option value="Vietnam" data-i18n-option="countryVietnam">Vietnam</option>
-      </select>
+      <div class="form-group">
+        <label id="labelNationality">国籍:</label>
+        <select name="nationality" id="nationalitySelect" required>
+  <option value="">{emptyNationality}</option>
+  <optgroup label="Popular">
+    <option value="Japan" data-i18n-option="countryJapan">Japan</option>
+    <option value="USA" data-i18n-option="countryUSA">USA</option>
+    <option value="China" data-i18n-option="countryChina">China</option>
+    <option value="South Korea" data-i18n-option="countryKorea">South Korea</option>
+    <option value="Taiwan" data-i18n-option="countryTaiwan">Taiwan</option>
+    <option value="Hong Kong">Hong Kong</option>
+    <option value="Thailand" data-i18n-option="countryThailand">Thailand</option>
+    <option value="Australia">Australia</option>
+  </optgroup>
+  
+  <optgroup label="All Countries">
+    <option value="Afghanistan">Afghanistan</option>
+    <option value="Albania">Albania</option>
+    <option value="Algeria">Algeria</option>
+    <option value="Andorra">Andorra</option>
+    <option value="Angola">Angola</option>
+    <option value="Argentina">Argentina</option>
+    <option value="Armenia">Armenia</option>
+    <option value="Australia">Australia</option>
+    <option value="Austria">Austria</option>
+    <option value="Azerbaijan">Azerbaijan</option>
+    <option value="Bahamas">Bahamas</option>
+    <option value="Bahrain">Bahrain</option>
+    <option value="Bangladesh">Bangladesh</option>
+    <option value="Barbados">Barbados</option>
+    <option value="Belarus">Belarus</option>
+    <option value="Belgium">Belgium</option>
+    <option value="Belize">Belize</option>
+    <option value="Benin">Benin</option>
+    <option value="Bhutan">Bhutan</option>
+    <option value="Bolivia">Bolivia</option>
+    <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+    <option value="Botswana">Botswana</option>
+    <option value="Brazil">Brazil</option>
+    <option value="Brunei">Brunei</option>
+    <option value="Bulgaria">Bulgaria</option>
+    <option value="Burkina Faso">Burkina Faso</option>
+    <option value="Burundi">Burundi</option>
+    <option value="Cambodia">Cambodia</option>
+    <option value="Cameroon">Cameroon</option>
+    <option value="Canada">Canada</option>
+    <option value="Central African Republic">Central African Republic</option>
+    <option value="Chad">Chad</option>
+    <option value="Chile">Chile</option>
+    <option value="China" data-i18n-option="countryChina">China</option>
+    <option value="Colombia">Colombia</option>
+    <option value="Comoros">Comoros</option>
+    <option value="Congo">Congo</option>
+    <option value="Costa Rica">Costa Rica</option>
+    <option value="Croatia">Croatia</option>
+    <option value="Cuba">Cuba</option>
+    <option value="Cyprus">Cyprus</option>
+    <option value="Czech Republic">Czech Republic</option>
+    <option value="Denmark">Denmark</option>
+    <option value="Djibouti">Djibouti</option>
+    <option value="Dominica">Dominica</option>
+    <option value="Dominican Republic">Dominican Republic</option>
+    <option value="Ecuador">Ecuador</option>
+    <option value="Egypt">Egypt</option>
+    <option value="El Salvador">El Salvador</option>
+    <option value="Estonia">Estonia</option>
+    <option value="Ethiopia">Ethiopia</option>
+    <option value="Fiji">Fiji</option>
+    <option value="Finland">Finland</option>
+    <option value="France" data-i18n-option="countryFrance">France</option>
+    <option value="Gabon">Gabon</option>
+    <option value="Gambia">Gambia</option>
+    <option value="Georgia">Georgia</option>
+    <option value="Germany" data-i18n-option="countryGermany">Germany</option>
+    <option value="Ghana">Ghana</option>
+    <option value="Greece">Greece</option>
+    <option value="Guatemala">Guatemala</option>
+    <option value="Guinea">Guinea</option>
+    <option value="Guyana">Guyana</option>
+    <option value="Haiti">Haiti</option>
+    <option value="Honduras">Honduras</option>
+    <option value="Hungary">Hungary</option>
+    <option value="Iceland">Iceland</option>
+    <option value="India">India</option>
+    <option value="Indonesia">Indonesia</option>
+    <option value="Iran">Iran</option>
+    <option value="Iraq">Iraq</option>
+    <option value="Ireland">Ireland</option>
+    <option value="Israel">Israel</option>
+    <option value="Italy" data-i18n-option="countryItaly">Italy</option>
+    <option value="Jamaica">Jamaica</option>
+    <option value="Japan" data-i18n-option="countryJapan">Japan</option>
+    <option value="Jordan">Jordan</option>
+    <option value="Kazakhstan">Kazakhstan</option>
+    <option value="Kenya">Kenya</option>
+    <option value="Kiribati">Kiribati</option>
+    <option value="Kuwait">Kuwait</option>
+    <option value="Kyrgyzstan">Kyrgyzstan</option>
+    <option value="Laos">Laos</option>
+    <option value="Latvia">Latvia</option>
+    <option value="Lebanon">Lebanon</option>
+    <option value="Lesotho">Lesotho</option>
+    <option value="Liberia">Liberia</option>
+    <option value="Libya">Libya</option>
+    <option value="Liechtenstein">Liechtenstein</option>
+    <option value="Lithuania">Lithuania</option>
+    <option value="Luxembourg">Luxembourg</option>
+    <option value="Madagascar">Madagascar</option>
+    <option value="Malawi">Malawi</option>
+    <option value="Malaysia">Malaysia</option>
+    <option value="Maldives">Maldives</option>
+    <option value="Mali">Mali</option>
+    <option value="Malta">Malta</option>
+    <option value="Mauritania">Mauritania</option>
+    <option value="Mauritius">Mauritius</option>
+    <option value="Mexico">Mexico</option>
+    <option value="Micronesia">Micronesia</option>
+    <option value="Moldova">Moldova</option>
+    <option value="Monaco">Monaco</option>
+    <option value="Mongolia">Mongolia</option>
+    <option value="Montenegro">Montenegro</option>
+    <option value="Morocco">Morocco</option>
+    <option value="Mozambique">Mozambique</option>
+    <option value="Myanmar">Myanmar</option>
+    <option value="Namibia">Namibia</option>
+    <option value="Nauru">Nauru</option>
+    <option value="Nepal">Nepal</option>
+    <option value="Netherlands">Netherlands</option>
+    <option value="New Zealand">New Zealand</option>
+    <option value="Nicaragua">Nicaragua</option>
+    <option value="Niger">Niger</option>
+    <option value="Nigeria">Nigeria</option>
+    <option value="North Korea">North Korea</option>
+    <option value="Norway">Norway</option>
+    <option value="Oman">Oman</option>
+    <option value="Pakistan">Pakistan</option>
+    <option value="Palau">Palau</option>
+    <option value="Panama">Panama</option>
+    <option value="Papua New Guinea">Papua New Guinea</option>
+    <option value="Paraguay">Paraguay</option>
+    <option value="Peru">Peru</option>
+    <option value="Philippines">Philippines</option>
+    <option value="Poland">Poland</option>
+    <option value="Portugal">Portugal</option>
+    <option value="Qatar">Qatar</option>
+    <option value="Romania">Romania</option>
+    <option value="Russia" data-i18n-option="countryRussia">Russia</option>
+    <option value="Rwanda">Rwanda</option>
+    <option value="Samoa">Samoa</option>
+    <option value="San Marino">San Marino</option>
+    <option value="Saudi Arabia">Saudi Arabia</option>
+    <option value="Senegal">Senegal</option>
+    <option value="Serbia">Serbia</option>
+    <option value="Seychelles">Seychelles</option>
+    <option value="Sierra Leone">Sierra Leone</option>
+    <option value="Singapore">Singapore</option>
+    <option value="Slovakia">Slovakia</option>
+    <option value="Slovenia">Slovenia</option>
+    <option value="Solomon Islands">Solomon Islands</option>
+    <option value="Somalia">Somalia</option>
+    <option value="South Africa">South Africa</option>
+    <option value="South Korea" data-i18n-option="countryKorea">South Korea</option>
+    <option value="Spain">Spain</option>
+    <option value="Sri Lanka">Sri Lanka</option>
+    <option value="Sudan">Sudan</option>
+    <option value="Suriname">Suriname</option>
+    <option value="Swaziland">Swaziland</option>
+    <option value="Sweden">Sweden</option>
+    <option value="Switzerland" data-i18n-option="countrySwitzerland">Switzerland</option>
+    <option value="Syria">Syria</option>
+    <option value="Taiwan" data-i18n-option="countryTaiwan">Taiwan</option>
+    <option value="Tajikistan">Tajikistan</option>
+    <option value="Tanzania">Tanzania</option>
+    <option value="Thailand" data-i18n-option="countryThailand">Thailand</option>
+    <option value="Togo">Togo</option>
+    <option value="Tonga">Tonga</option>
+    <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+    <option value="Tunisia">Tunisia</option>
+    <option value="Turkey">Turkey</option>
+    <option value="Turkmenistan">Turkmenistan</option>
+    <option value="Tuvalu">Tuvalu</option>
+    <option value="Uganda">Uganda</option>
+    <option value="Ukraine">Ukraine</option>
+    <option value="United Arab Emirates">United Arab Emirates</option>
+    <option value="United Kingdom">United Kingdom</option>
+    <option value="Uruguay">Uruguay</option>
+    <option value="USA" data-i18n-option="countryUSA">USA</option>
+    <option value="Uzbekistan">Uzbekistan</option>
+    <option value="Vanuatu">Vanuatu</option>
+    <option value="Vatican City">Vatican City</option>
+    <option value="Venezuela">Venezuela</option>
+    <option value="Vietnam" data-i18n-option="countryVietnam">Vietnam</option>
+    <option value="Yemen">Yemen</option>
+    <option value="Zambia">Zambia</option>
+    <option value="Zimbabwe">Zimbabwe</option>
+  </optgroup>
+</select>
+      </div>
 
-      <label id="labelPrev">前泊地:</label>
-      <input type="text" name="previousStay" required>
+      <div class="form-group">
+        <label id="labelPrev">前泊地:</label>
+        <input type="text" name="previousStay" required>
+      </div>
 
-      <label id="labelNext">後泊地:</label>
-      <input type="text" name="nextDestination" required>
+      <div class="form-group">
+        <label id="labelNext">後泊地:</label>
+        <input type="text" name="nextDestination" required>
+      </div>
 
-      <button type="submit" id="submitBtn">送信</button>
+      <div class="form-group">
+        <label id="labelPhone"><i class="fa-solid fa-phone"></i>電話番号:</label>
+        <input type="tel" name="phone" placeholder="e.g. +81 90..." required>
+      </div>
+
+      <div class="form-group">
+        <label id="labelEmail"><i class="fa-solid fa-envelope"></i>メールアドレス:</label>
+        <input type="email" name="email" placeholder="e.g. guest@example.com" required>
+      </div>
+
+      <button type="submit" id="submitBtn">Submit</button>
     </form>
-
-    <p id="message"></p>
+    <div id="message"></div>
   </div>
-<script>
-    
-    
-    // ✅② 翻訳データ
+
+  <script>
+    // 1. 全言語の翻訳データ
     const translations = {
       ja: {
         formTitle: "チェックイン情報",
-        labelDob: "生年月日:",
-        labelGender: "性別:",
-        labelNationality: "国籍:",
-        labelPrev: "前泊地:",
-        labelNext: "後泊地:",
-        submit: "送信",
-        loading: "読み込み中...",
-        success: "送信が完了しました。3秒後にトップページへ移動します。",
-        fail: "送信に失敗しました。",
-        notfound: "予約情報が見つかりませんでした。",
-        network: "通信エラーが発生しました。",
-        labelName: "名前：",
-        labelCode: "予約番号：",
-        labelCheckin: "チェックイン日：",
-        labelCheckout: "チェックアウト日：",
-        labelRoom: "部屋タイプ：",
-        emptyNationality: "選択してください",
-        countryJapan: "日本",
-        countryUSA: "アメリカ",
-        countryChina: "中国",
-        countryGermany: "ドイツ",
-        countryFrance: "フランス",
-        countryTaiwan: "台湾",
-        countryKorea: "韓国",
-        countryItaly: "イタリア",
-        countrySwitzerland: "スイス",
-        countryRussia: "ロシア",
-        countryThailand: "タイ",
-        countryVietnam: "ベトナム",
-        emptyGender:"選択してください",
-        genderMale:"男性",
-        genderFemale:"女性",
-        genderOther:"その他",
+        labelDob: "生年月日:", labelGender: "性別:", labelNationality: "国籍:", labelPrev: "前泊地:", labelNext: "後泊地:",
+        submit: "送信", success: "送信完了。転送します...", labelName: "名前:", labelCode: "予約番号:",
+        labelCheckin: "到着日:", labelCheckout: "出発日:", labelRoom: "部屋:",
+        emptyNationality: "選択してください", emptyGender: "選択してください",
+        countryJapan: "日本", countryUSA: "アメリカ", countryChina: "中国", countryGermany: "ドイツ", countryFrance: "フランス", countryTaiwan: "台湾", countryKorea: "韓国", countryItaly: "イタリア", countrySwitzerland: "スイス", countryRussia: "ロシア", countryThailand: "タイ", countryVietnam: "ベトナム",
+        genderMale: "男性", genderFemale: "女性", genderOther: "その他"
       },
       en: {
         formTitle: "Check-in Information",
-        labelDob: "Date of Birth:",
-        labelGender: "Gender:",
-        labelNationality: "Nationality:",
-        labelPrev: "Previous Stay:",
-        labelNext: "Next Destination:",
-        submit: "Submit",
-        loading: "Loading...",
-        success: "Submitted successfully. Redirecting in 3 seconds.",
-        fail: "Submission failed.",
-        notfound: "Reservation not found.",
-        network: "Network error occurred.",
-        labelName: "Name:",
-        labelCode: "Booking Number:",
-        labelCheckin: "Check-in Date:",
-        labelCheckout: "Check-out Date:",
-        labelRoom: "Room Type:",
-        emptyNationality: "Please select",
-        countryJapan: "Japan",
-        countryUSA: "USA",
-        countryChina: "China",
-        countryGermany: "Germany",
-        countryFrance: "France",
-        countryTaiwan: "Taiwan",
-        countryKorea: "South Korea",
-        countryItaly: "Italy",
-        countrySwitzerland: "Switzerland",
-        countryRussia: "Russia",
-        countryThailand: "Thailand",
-        countryVietnam: "Vietnam",
-        emptyGender: "Please select",
-        genderMale: "Male",
-        genderFemale: "Female",
-        genderOther: "Other",
-         },
-    
+        labelDob: "Date of Birth:", labelGender: "Gender:", labelNationality: "Nationality:", labelPrev: "Previous Stay:", labelNext: "Next Destination:",
+        submit: "Submit", success: "Success! Redirecting...", labelName: "Name:", labelCode: "Booking No:",
+        labelCheckin: "Check-in:", labelCheckout: "Check-out:", labelRoom: "Room:",
+        emptyNationality: "Please select", emptyGender: "Please select",
+        countryJapan: "Japan", countryUSA: "USA", countryChina: "China", countryGermany: "Germany", countryFrance: "France", countryTaiwan: "Taiwan", countryKorea: "South Korea", countryItaly: "Italy", countrySwitzerland: "Switzerland", countryRussia: "Russia", countryThailand: "Thailand", countryVietnam: "Vietnam",
+        genderMale: "Male", genderFemale: "Female", genderOther: "Other"
+      },
       es: {
         formTitle: "Información de Check-in",
-        labelDob: "Fecha de nacimiento:",
-        labelGender: "Género:",
-        labelNationality: "Nacionalidad:",
-        labelPrev: "Alojamiento anterior:",
-        labelNext: "Próximo destino:",
-        submit: "Enviar",
-        loading: "Cargando...",
-        success: "Enviado correctamente. Redirigiendo en 3 segundos.",
-        fail: "Error al enviar.",
-        notfound: "No se encontró la reserva.",
-        network: "Error de red.",
-        labelName: "Nombre:",
-        labelCode: "Código de reserva:",
-        labelCheckin: "Fecha de entrada:",
-        labelCheckout: "Fecha de salida:",
-        labelRoom: "Tipo de habitación:",
-        emptyNationality: "Seleccione",
-        countryJapan: "Japón",
-        countryUSA: "EE. UU.",
-        countryChina: "China",
-        countryGermany: "Alemania",
-        countryFrance: "Francia",
-        countryTaiwan: "Taiwán",
-        countryKorea: "Corea del Sur",
-        countryItaly: "Italia",
-        countrySwitzerland: "Suiza",
-        countryRussia: "Rusia",
-        countryThailand: "Tailandia",
-        countryVietnam: "Vietnam",
-        emptyGender: "Seleccione",
-        genderMale: "Hombre",
-        genderFemale: "Mujer",
-        genderOther: "Otro",   
+        labelDob: "Fecha de nacimiento:", labelGender: "Género:", labelNationality: "Nacionalidad:", labelPrev: "Alojamiento anterior:", labelNext: "Próximo destino:",
+        submit: "Enviar", success: "Enviado correctamente. Redirigiendo...", labelName: "Nombre:", labelCode: "Código:",
+        labelCheckin: "Entrada:", labelCheckout: "Salida:", labelRoom: "Habitación:",
+        emptyNationality: "Seleccione", emptyGender: "Seleccione",
+        countryJapan: "Japón", countryUSA: "EE. UU.", countryChina: "China", countryGermany: "Alemania", countryFrance: "Francia", countryTaiwan: "Taiwán", countryKorea: "Corea del Sur", countryItaly: "Italia", countrySwitzerland: "Suiza", countryRussia: "Rusia", countryThailand: "Tailandia", countryVietnam: "Vietnam",
+        genderMale: "Hombre", genderFemale: "Mujer", genderOther: "Otro"
       },
-          
       "zh-CN": {
         formTitle: "入住信息",
-        labelDob: "出生日期：",
-        labelGender: "性别：",
-        labelNationality: "国籍：",
-        labelPrev: "前一住宿地：",
-        labelNext: "下一目的地：",
-        submit: "提交",
-        loading: "加载中...",
-        success: "提交成功。3秒后跳转主页。",
-        fail: "提交失败。",
-        notfound: "未找到预订信息。",
-        network: "网络错误。",
-        labelName: "姓名：",
-        labelCode: "预订号码：",
-        labelCheckin: "入住日期：",
-        labelCheckout: "退房日期：",
-        labelRoom: "房型：",
-        emptyNationality: "请选择",
-        countryJapan: "日本",
-        countryUSA: "美国",
-        countryChina: "中国",
-        countryGermany: "德国",
-        countryFrance: "法国",
-        countryTaiwan: "台湾",
-        countryKorea: "韩国",
-        countryItaly: "意大利",
-        countrySwitzerland: "瑞士",
-        countryRussia: "俄罗斯",
-        countryThailand: "泰国",
-        countryVietnam: "越南",
-        emptyGender: "请选择",
-        genderMale: "男",
-        genderFemale: "女",
-        genderOther: "其他",
+        labelDob: "出生日期:", labelGender: "性别:", labelNationality: "国籍:", labelPrev: "前一住宿地:", labelNext: "下一目的地:",
+        submit: "提交", success: "提交成功。正在跳转...", labelName: "姓名:", labelCode: "预订号码:",
+        labelCheckin: "入住日期:", labelCheckout: "退房日期:", labelRoom: "房型:",
+        emptyNationality: "请选择", emptyGender: "请选择",
+        countryJapan: "日本", countryUSA: "美国", countryChina: "中国", countryGermany: "德国", countryFrance: "法国", countryTaiwan: "台湾", countryKorea: "韩国", countryItaly: "意大利", countrySwitzerland: "瑞士", countryRussia: "俄罗斯", countryThailand: "泰国", countryVietnam: "越南",
+        genderMale: "男", genderFemale: "女", genderOther: "其他"
       },
-        
       "zh-TW": {
         formTitle: "入住資訊",
-        labelDob: "出生日期：",
-        labelGender: "性別：",
-        labelNationality: "國籍：",
-        labelPrev: "前一住宿地：",
-        labelNext: "下一目的地：",
-        submit: "送出",
-        loading: "載入中...",
-        success: "已送出。3秒後返回首頁。",
-        fail: "送出失敗。",
-        notfound: "找不到預訂資訊。",
-        network: "網路錯誤。",
-        labelName: "姓名：",
-        labelCode: "預訂編號：",
-        labelCheckin: "入住日期：",
-        labelCheckout: "退房日期：",
-        labelRoom: "房型：",
-        emptyNationality: "請選擇",
-        countryJapan: "日本",
-        countryUSA: "美國",
-        countryChina: "中國",
-        countryGermany: "德國",
-        countryFrance: "法國",
-        countryTaiwan: "台灣",
-        countryKorea: "韓國",
-        countryItaly: "義大利",
-        countrySwitzerland: "瑞士",
-        countryRussia: "俄羅斯",
-        countryThailand: "泰國",
-        countryVietnam: "越南",
-        emptyGender: "請選擇",
-        genderMale: "男",
-        genderFemale: "女",
-        genderOther: "其他",
+        labelDob: "出生日期:", labelGender: "性別:", labelNationality: "國籍:", labelPrev: "前一住宿地:", labelNext: "下一目的地:",
+        submit: "送出", success: "提交成功。正在跳轉...", labelName: "姓名:", labelCode: "預訂編號:",
+        labelCheckin: "入住日期:", labelCheckout: "退房日期:", labelRoom: "房型:",
+        emptyNationality: "請選擇", emptyGender: "請選擇",
+        countryJapan: "日本", countryUSA: "美國", countryChina: "中國", countryGermany: "德國", countryFrance: "法國", countryTaiwan: "台灣", countryKorea: "韓國", countryItaly: "義大利", countrySwitzerland: "瑞士", countryRussia: "俄羅斯", countryThailand: "泰國", countryVietnam: "越南",
+        genderMale: "男", genderFemale: "女", genderOther: "其他"
       },
-    "ko": {
+      ko: {
         formTitle: "체크인 정보",
-        labelDob: "생년월일:",
-        labelGender: "성별:",
-        labelNationality: "국적:",
-        labelPrev: "이전 숙소:",
-        labelNext: "다음 목적지:",
-        submit: "제출",
-        loading: "불러오는 중...",
-        success: "제출이 완료되었습니다. 3초 후에 메인 페이지로 이동합니다.",
-        fail: "제출에 실패했습니다.",
-        notfound: "예약 정보를 찾을 수 없습니다.",
-        network: "네트워크 오류가 발생했습니다.",
-        labelName: "이름:",
-        labelCode: "예약 번호:",
-        labelCheckin: "체크인 날짜:",
-        labelCheckout: "체크아웃 날짜:",
-        labelRoom: "객실 유형:",
-        emptyNationality: "선택하세요",
-        countryJapan: "일본",
-        countryUSA: "미국",
-        countryChina: "중국",
-        countryGermany: "독일",
-        countryFrance: "프랑스",
-        countryTaiwan: "대만",
-        countryKorea: "대한민국",
-        countryItaly: "이탈리아",
-        countrySwitzerland: "스위스",
-        countryRussia: "러시아",
-        countryThailand: "태국",
-        countryVietnam: "베트남",
-        emptyGender: "선택하세요",
-        genderMale: "남성",
-        genderFemale: "여성",
-        genderOther: "기타",
-       } 
+        labelDob: "생년월일:", labelGender: "성별:", labelNationality: "국적:", labelPrev: "이전 숙소:", labelNext: "다음 목적지:",
+        submit: "제출", success: "제출 완료. 이동 중...", labelName: "이름:", labelCode: "예약 번호:",
+        labelCheckin: "체크인:", labelCheckout: "체크아웃:", labelRoom: "객실:",
+        emptyNationality: "선택하세요", emptyGender: "선택하세요",
+        countryJapan: "일본", countryUSA: "미국", countryChina: "중국", countryGermany: "독일", countryFrance: "프랑스", countryTaiwan: "대만", countryKorea: "대한민국", countryItaly: "이탈리아", countrySwitzerland: "스위스", countryRussia: "러시아", countryThailand: "태국", countryVietnam: "베트남",
+        genderMale: "남성", genderFemale: "여성", genderOther: "기타"
+      }
     };
 
-    // ✅③ 言語選択・保持・反映
- 
-   const params = new URLSearchParams(window.location.search);
-    const name = params.get("name");
-    const booking = params.get("booking");
-    const lang = params.get("lang") || localStorage.getItem("lang") || "ja";
+    // URLパラメータから言語を取得
+    const params = new URLSearchParams(window.location.search);
+    let currentLang = params.get("lang") || localStorage.getItem("lang") || "ja";
 
+    // 言語を適用する関数
     function applyLanguage(lang) {
       const t = translations[lang] || translations["en"];
+      
+      // 各ラベルの更新
       document.getElementById("formTitle").innerText = t.formTitle;
-      document.getElementById("labelDob").innerText = t.labelDob;
-      document.getElementById("labelGender").innerText = t.labelGender;
-      document.getElementById("labelNationality").innerText = t.labelNationality;
-      document.getElementById("labelPrev").innerText = t.labelPrev;
-      document.getElementById("labelNext").innerText = t.labelNext;
+      document.getElementById("labelDob").innerHTML = `<i class="fa-solid fa-cake-candles"></i>${t.labelDob}`;
+      document.getElementById("labelGender").innerHTML = `<i class="fa-solid fa-venus-mars"></i>${t.labelGender}`;
+      document.getElementById("labelNationality").innerHTML = `<i class="fa-solid fa-passport"></i>${t.labelNationality}`;
+      document.getElementById("labelPrev").innerHTML = `<i class="fa-solid fa-plane-arrival"></i>${t.labelPrev}`;
+      document.getElementById("labelNext").innerHTML = `<i class="fa-solid fa-plane-departure"></i>${t.labelNext}`;
       document.getElementById("submitBtn").innerText = t.submit;
-      document.getElementById("guestInfo").innerText = t.loading;
       document.getElementById("languageSelect").value = lang;
-      localStorage.setItem("lang", lang);
 
-      document.querySelectorAll("#nationalitySelect option[data-i18n-option]").forEach(opt => {
-        const key = opt.getAttribute("data-i18n-option");
-        opt.innerText = t[key];
+      // セレクトボックスの翻訳
+      document.querySelectorAll("option[data-i18n-option]").forEach(opt => {
+        opt.innerText = t[opt.getAttribute("data-i18n-option")] || opt.innerText;
       });
       document.querySelector("#nationalitySelect option[value='']").innerText = t.emptyNationality;
-
-      document.querySelectorAll("#genderSelect option[data-i18n-option]").forEach(opt => {
-        const key = opt.getAttribute("data-i18n-option");
-        opt.innerText = t[key];
-      });
       document.querySelector("#genderSelect option[value='']").innerText = t.emptyGender;
 
-      $('#nationalitySelect').select2({ width: '100%', minimumResultsForSearch: 5, language: lang });
+      // 【修正ポイント】予約情報も現在の言語で再表示
+      const savedData = JSON.parse(localStorage.getItem("temp_guest_data"));
+      const savedName = localStorage.getItem("temp_guest_name");
+      const savedBooking = localStorage.getItem("temp_guest_booking");
+
+      if (savedData && savedName) {
+        document.getElementById("guestInfo").innerHTML = `
+          <p><strong>${t.labelName}</strong> <span>${savedName}</span></p>
+          <hr style="border:0; border-top:1px solid #e2e8f0; margin:10px 0;">
+          <p><strong>${t.labelCode}</strong> <span>${savedBooking}</span></p>
+          <p><strong>${t.labelCheckin}</strong> <span>${savedData.checkin}</span></p>
+          <p><strong>${t.labelCheckout}</strong> <span>${savedData.checkout}</span></p>
+          <p><strong>${t.labelRoom}</strong> <span>${savedData.room}</span></p>`;
+      }
+
+      // Select2の再初期化
+      $('#nationalitySelect').select2({ width: '100%', language: lang, placeholder: t.emptyNationality });
     }
 
-    function setLanguage(lang) {
-      applyLanguage(lang);
+    // 初回実行
+    applyLanguage(currentLang);
+
+    // 言語切り替えボタンが押されたとき
+    function setLanguage(l) {
+      localStorage.setItem("lang", l);
+      applyLanguage(l);
     }
 
-    applyLanguage(lang);
-
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzTOVbObca7nkgQQKVRgOkx4r54eHd-gyoBny0cZaNRIjVWjDiL8xoJvfb3RMJ9SUtb9Q/exec";
-
-    fetch(`${scriptURL}?name=${encodeURIComponent(name)}&booking=${booking}&mode=info`)
-      .then(res => res.json())
-      .then(data => {
-        const t = translations[lang] || translations["en"];
-        if (data.result === "OK") {
-          const checkinDate = data.checkin.split("T")[0];
-          const checkoutDate = data.checkout.split("T")[0];
-          document.getElementById("guestInfo").innerHTML = `
-            <p><strong>${t.labelName}</strong> ${name}</p>
-            <p><strong>${t.labelCode}</strong> ${booking}</p>
-            <p><strong>${t.labelCheckin}</strong> ${checkinDate}</p>
-            <p><strong>${t.labelCheckout}</strong> ${checkoutDate}</p>
-            <p><strong>${t.labelRoom}</strong> ${data.room}</p>`;
-        } else {
-          document.getElementById("guestInfo").innerText = t.notfound;
-        }
-      })
-      .catch(() => {
-        document.getElementById("guestInfo").innerText = translations[lang].network;
-      });
+    // 送信処理（GASへPOST）
+    const scriptURL = "https://script.google.com/macros/s/AKfycby2-TCHJJgwEJ_Ckmy5W4W5NEWrhu63z-6e1aodLnRmqYrucNsLJinVVniPExb2b98cJg/exec";
 
     document.getElementById("checkinForm").addEventListener("submit", function (e) {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      formData.append("name", name);
-      formData.append("booking", booking);
+      const btn = document.getElementById("submitBtn");
+      const t = translations[localStorage.getItem("lang") || "ja"] || translations["en"];
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
 
-      fetch(scriptURL, {
-        method: "POST",
-        body: formData,
-        redirect: "follow"
-      })
+      const formData = new FormData(e.target);
+      formData.append("name", localStorage.getItem("temp_guest_name"));
+      formData.append("booking", localStorage.getItem("temp_guest_booking"));
+
+      fetch(scriptURL, { method: "POST", body: formData })
         .then(res => res.text())
         .then(res => {
           if (res === "RECEIVED") {
-            document.getElementById("message").innerText = translations[lang].success;
-            setTimeout(() => {
-              window.location.href = "https://wiseowlhostels.com/kyoto/";
-            }, 3000);
-          } else {
-            document.getElementById("message").innerText = translations[lang].fail;
+            const msg = document.getElementById("message");
+            msg.style.color = "green";
+            msg.innerText = t.success;
+            setTimeout(() => window.location.href = "https://wiseowlhostels.com/", 2500);
           }
         })
         .catch(() => {
-          document.getElementById("message").innerText = translations[lang].network;
+          btn.disabled = false;
+          btn.innerText = t.submit;
+          alert("Network error.");
         });
     });
   </script>
 </body>
 </html>
-
