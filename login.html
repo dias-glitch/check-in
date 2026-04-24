@@ -198,7 +198,7 @@
 
     applyLanguage(currentLang);
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzTOVbObca7nkgQQKVRgOkx4r54eHd-gyoBny0cZaNRIjVWjDiL8xoJvfb3RMJ9SUtb9Q/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycby2-TCHJJgwEJ_Ckmy5W4W5NEWrhu63z-6e1aodLnRmqYrucNsLJinVVniPExb2b98cJg/exec";
 
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
@@ -216,23 +216,33 @@
       document.getElementById("spinner").style.display = "block";
 
       fetch(`${scriptURL}?name=${encodeURIComponent(name)}&booking=${encodeURIComponent(booking)}`)
-        .then(res => res.text())
-        .then(result => {
-          if (result === "OK") {
-            window.location.href = `checkin.html?name=${encodeURIComponent(name)}&booking=${encodeURIComponent(booking)}&lang=${currentLang}`;
+        .then(res => res.json())
+       .then(data => {
+          if (data.result === "OK") {
+            // ここでデータをブラウザに一時保存する
+            localStorage.setItem("temp_guest_data", JSON.stringify(data));
+            localStorage.setItem("temp_guest_name", name);
+            localStorage.setItem("temp_guest_booking", booking);
+
+            const params = new URLSearchParams({
+              lang: currentLang
+            });
+            window.location.href = `checkin.html?${params.toString()}`;
           } else {
             showMessage(translations[currentLang].error);
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error(err);
           showMessage(translations[currentLang].network);
         })
         .finally(() => {
+          // ここでボタンの状態を元に戻す処理が必要です
           document.getElementById("loginBtn").disabled = false;
           document.getElementById("loginBtn").innerText = translations[currentLang].button;
           document.getElementById("spinner").style.display = "none";
         });
-    });
+    }); // ← ここで addEventListener を閉じる
 
     function showMessage(msg) {
       const m = document.getElementById("message");
