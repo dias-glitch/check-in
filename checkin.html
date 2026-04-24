@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>チェックインフォーム</title>
+
+  <!-- jQuery & Select2 -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Select2 i18n -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/ja.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/zh-CN.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/ko.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .checkin-box {
+      background-color: white;
+      padding: 30px 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 420px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .language-select {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display 8px;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .language-select select{
+      font-size: 12px;
+      padding: 2px 6px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      background-color: blue;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 25px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: darkblue;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+      color: green;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="checkin-box">
+    <div class="language-select">
+      🌐
+      <select id="languageSelect" onchange="setLanguage(this.value)">
+        <option value="ja">日本語</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="zh-CN">简体中文</option>
+        <option value="zh-TW">繁體中文</option>
+        <option value="ko">한국어</option>
+      </select>
+    </div>
+
+    <h2 id="formTitle">チェックイン情報</h2>
+    <div id="guestInfo">読み込み中...</div>
+
+    <form id="checkinForm">
+      <label id="labelDob">生年月日:</label>
+      <input type="date" name="dob" required>
+
+      <label id="labelGender">性別:</label>
+      <select name="gender" id="genderSelect" required>
+        <option value="">{emptyGender}</option>
+        <option value="M" data-i18n-option="genderMale">男性</option>
+        <option value="F" data-i18n-option="genderFemale">女性</option>
+        <option value="Other" data-i18n-option="genderOther">その他</option>
+      </select>
+
+      <label id="labelNationality">国籍:</label>
+      <select name="nationality" id="nationalitySelect" required>
+        <option value="">{emptyNationality}</option>
+        <option value="Japan" data-i18n-option="countryJapan">Japan</option>
+        <option value="USA" data-i18n-option="countryUSA">USA</option>
+        <option value="China" data-i18n-option="countryChina">China</option>
+        <option value="Germany" data-i18n-option="countryGermany">Germany</option>
+        <option value="France" data-i18n-option="countryFrance">France</option>
+        <option value="Taiwan" data-i18n-option="countryTaiwan">Taiwan</option>
+        <option value="South Korea" data-i18n-option="countryKorea">South Korea</option>
+        <option value="Italy" data-i18n-option="countryItaly">Italy</option>
+        <option value="Switzerland" data-i18n-option="countrySwitzerland">Switzerland</option>
+        <option value="Russia" data-i18n-option="countryRussia">Russia</option>
+        <option value="Thailand" data-i18n-option="countryThailand">Thailand</option>
+        <option value="Vietnam" data-i18n-option="countryVietnam">Vietnam</option>
+      </select>
+
+      <label id="labelPrev">前泊地:</label>
+      <input type="text" name="previousStay" required>
+
+      <label id="labelNext">後泊地:</label>
+      <input type="text" name="nextDestination" required>
+
+      <button type="submit" id="submitBtn">送信</button>
+    </form>
+
+    <p id="message"></p>
+  </div>
+<script>
+    
+    
+    // ✅② 翻訳データ
+    const translations = {
+      ja: {
+        formTitle: "チェックイン情報",
+        labelDob: "生年月日:",
+        labelGender: "性別:",
+        labelNationality: "国籍:",
+        labelPrev: "前泊地:",
+        labelNext: "後泊地:",
+        submit: "送信",
+        loading: "読み込み中...",
+        success: "送信が完了しました。3秒後にトップページへ移動します。",
+        fail: "送信に失敗しました。",
+        notfound: "予約情報が見つかりませんでした。",
+        network: "通信エラーが発生しました。",
+        labelName: "名前：",
+        labelCode: "予約番号：",
+        labelCheckin: "チェックイン日：",
+        labelCheckout: "チェックアウト日：",
+        labelRoom: "部屋タイプ：",
+        emptyNationality: "選択してください",
+        countryJapan: "日本",
+        countryUSA: "アメリカ",
+        countryChina: "中国",
+        countryGermany: "ドイツ",
+        countryFrance: "フランス",
+        countryTaiwan: "台湾",
+        countryKorea: "韓国",
+        countryItaly: "イタリア",
+        countrySwitzerland: "スイス",
+        countryRussia: "ロシア",
+        countryThailand: "タイ",
+        countryVietnam: "ベトナム",
+        emptyGender:"選択してください",
+        genderMale:"男性",
+        genderFemale:"女性",
+        genderOther:"その他",
+      },
+      en: {
+        formTitle: "Check-in Information",
+        labelDob: "Date of Birth:",
+        labelGender: "Gender:",
+        labelNationality: "Nationality:",
+        labelPrev: "Previous Stay:",
+        labelNext: "Next Destination:",
+        submit: "Submit",
+        loading: "Loading...",
+        success: "Submitted successfully. Redirecting in 3 seconds.",
+        fail: "Submission failed.",
+        notfound: "Reservation not found.",
+        network: "Network error occurred.",
+        labelName: "Name:",
+        labelCode: "Booking Number:",
+        labelCheckin: "Check-in Date:",
+        labelCheckout: "Check-out Date:",
+        labelRoom: "Room Type:",
+        emptyNationality: "Please select",
+        countryJapan: "Japan",
+        countryUSA: "USA",
+        countryChina: "China",
+        countryGermany: "Germany",
+        countryFrance: "France",
+        countryTaiwan: "Taiwan",
+        countryKorea: "South Korea",
+        countryItaly: "Italy",
+        countrySwitzerland: "Switzerland",
+        countryRussia: "Russia",
+        countryThailand: "Thailand",
+        countryVietnam: "Vietnam",
+        emptyGender: "Please select",
+        genderMale: "Male",
+        genderFemale: "Female",
+        genderOther: "Other",
+         },
+    
+      es: {
+        formTitle: "Información de Check-in",
+        labelDob: "Fecha de nacimiento:",
+        labelGender: "Género:",
+        labelNationality: "Nacionalidad:",
+        labelPrev: "Alojamiento anterior:",
+        labelNext: "Próximo destino:",
+        submit: "Enviar",
+        loading: "Cargando...",
+        success: "Enviado correctamente. Redirigiendo en 3 segundos.",
+        fail: "Error al enviar.",
+        notfound: "No se encontró la reserva.",
+        network: "Error de red.",
+        labelName: "Nombre:",
+        labelCode: "Código de reserva:",
+        labelCheckin: "Fecha de entrada:",
+        labelCheckout: "Fecha de salida:",
+        labelRoom: "Tipo de habitación:",
+        emptyNationality: "Seleccione",
+        countryJapan: "Japón",
+        countryUSA: "EE. UU.",
+        countryChina: "China",
+        countryGermany: "Alemania",
+        countryFrance: "Francia",
+        countryTaiwan: "Taiwán",
+        countryKorea: "Corea del Sur",
+        countryItaly: "Italia",
+        countrySwitzerland: "Suiza",
+        countryRussia: "Rusia",
+        countryThailand: "Tailandia",
+        countryVietnam: "Vietnam",
+        emptyGender: "Seleccione",
+        genderMale: "Hombre",
+        genderFemale: "Mujer",
+        genderOther: "Otro",   
+      },
+          
+      "zh-CN": {
+        formTitle: "入住信息",
+        labelDob: "出生日期：",
+        labelGender: "性别：",
+        labelNationality: "国籍：",
+        labelPrev: "前一住宿地：",
+        labelNext: "下一目的地：",
+        submit: "提交",
+        loading: "加载中...",
+        success: "提交成功。3秒后跳转主页。",
+        fail: "提交失败。",
+        notfound: "未找到预订信息。",
+        network: "网络错误。",
+        labelName: "姓名：",
+        labelCode: "预订号码：",
+        labelCheckin: "入住日期：",
+        labelCheckout: "退房日期：",
+        labelRoom: "房型：",
+        emptyNationality: "请选择",
+        countryJapan: "日本",
+        countryUSA: "美国",
+        countryChina: "中国",
+        countryGermany: "德国",
+        countryFrance: "法国",
+        countryTaiwan: "台湾",
+        countryKorea: "韩国",
+        countryItaly: "意大利",
+        countrySwitzerland: "瑞士",
+        countryRussia: "俄罗斯",
+        countryThailand: "泰国",
+        countryVietnam: "越南",
+        emptyGender: "请选择",
+        genderMale: "男",
+        genderFemale: "女",
+        genderOther: "其他",
+      },
+        
+      "zh-TW": {
+        formTitle: "入住資訊",
+        labelDob: "出生日期：",
+        labelGender: "性別：",
+        labelNationality: "國籍：",
+        labelPrev: "前一住宿地：",
+        labelNext: "下一目的地：",
+        submit: "送出",
+        loading: "載入中...",
+        success: "已送出。3秒後返回首頁。",
+        fail: "送出失敗。",
+        notfound: "找不到預訂資訊。",
+        network: "網路錯誤。",
+        labelName: "姓名：",
+        labelCode: "預訂編號：",
+        labelCheckin: "入住日期：",
+        labelCheckout: "退房日期：",
+        labelRoom: "房型：",
+        emptyNationality: "請選擇",
+        countryJapan: "日本",
+        countryUSA: "美國",
+        countryChina: "中國",
+        countryGermany: "德國",
+        countryFrance: "法國",
+        countryTaiwan: "台灣",
+        countryKorea: "韓國",
+        countryItaly: "義大利",
+        countrySwitzerland: "瑞士",
+        countryRussia: "俄羅斯",
+        countryThailand: "泰國",
+        countryVietnam: "越南",
+        emptyGender: "請選擇",
+        genderMale: "男",
+        genderFemale: "女",
+        genderOther: "其他",
+      },
+    "ko": {
+        formTitle: "체크인 정보",
+        labelDob: "생년월일:",
+        labelGender: "성별:",
+        labelNationality: "국적:",
+        labelPrev: "이전 숙소:",
+        labelNext: "다음 목적지:",
+        submit: "제출",
+        loading: "불러오는 중...",
+        success: "제출이 완료되었습니다. 3초 후에 메인 페이지로 이동합니다.",
+        fail: "제출에 실패했습니다.",
+        notfound: "예약 정보를 찾을 수 없습니다.",
+        network: "네트워크 오류가 발생했습니다.",
+        labelName: "이름:",
+        labelCode: "예약 번호:",
+        labelCheckin: "체크인 날짜:",
+        labelCheckout: "체크아웃 날짜:",
+        labelRoom: "객실 유형:",
+        emptyNationality: "선택하세요",
+        countryJapan: "일본",
+        countryUSA: "미국",
+        countryChina: "중국",
+        countryGermany: "독일",
+        countryFrance: "프랑스",
+        countryTaiwan: "대만",
+        countryKorea: "대한민국",
+        countryItaly: "이탈리아",
+        countrySwitzerland: "스위스",
+        countryRussia: "러시아",
+        countryThailand: "태국",
+        countryVietnam: "베트남",
+        emptyGender: "선택하세요",
+        genderMale: "남성",
+        genderFemale: "여성",
+        genderOther: "기타",
+       } 
+    };
+
+    // ✅③ 言語選択・保持・反映
+ 
+   const params = new URLSearchParams(window.location.search);
+    const name = params.get("name");
+    const booking = params.get("booking");
+    const lang = params.get("lang") || localStorage.getItem("lang") || "ja";
+
+    function applyLanguage(lang) {
+      const t = translations[lang] || translations["en"];
+      document.getElementById("formTitle").innerText = t.formTitle;
+      document.getElementById("labelDob").innerText = t.labelDob;
+      document.getElementById("labelGender").innerText = t.labelGender;
+      document.getElementById("labelNationality").innerText = t.labelNationality;
+      document.getElementById("labelPrev").innerText = t.labelPrev;
+      document.getElementById("labelNext").innerText = t.labelNext;
+      document.getElementById("submitBtn").innerText = t.submit;
+      document.getElementById("guestInfo").innerText = t.loading;
+      document.getElementById("languageSelect").value = lang;
+      localStorage.setItem("lang", lang);
+
+      document.querySelectorAll("#nationalitySelect option[data-i18n-option]").forEach(opt => {
+        const key = opt.getAttribute("data-i18n-option");
+        opt.innerText = t[key];
+      });
+      document.querySelector("#nationalitySelect option[value='']").innerText = t.emptyNationality;
+
+      document.querySelectorAll("#genderSelect option[data-i18n-option]").forEach(opt => {
+        const key = opt.getAttribute("data-i18n-option");
+        opt.innerText = t[key];
+      });
+      document.querySelector("#genderSelect option[value='']").innerText = t.emptyGender;
+
+      $('#nationalitySelect').select2({ width: '100%', minimumResultsForSearch: 5, language: lang });
+    }
+
+    function setLanguage(lang) {
+      applyLanguage(lang);
+    }
+
+    applyLanguage(lang);
+
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzTOVbObca7nkgQQKVRgOkx4r54eHd-gyoBny0cZaNRIjVWjDiL8xoJvfb3RMJ9SUtb9Q/exec";
+
+    fetch(`${scriptURL}?name=${encodeURIComponent(name)}&booking=${booking}&mode=info`)
+      .then(res => res.json())
+      .then(data => {
+        const t = translations[lang] || translations["en"];
+        if (data.result === "OK") {
+          const checkinDate = data.checkin.split("T")[0];
+          const checkoutDate = data.checkout.split("T")[0];
+          document.getElementById("guestInfo").innerHTML = `
+            <p><strong>${t.labelName}</strong> ${name}</p>
+            <p><strong>${t.labelCode}</strong> ${booking}</p>
+            <p><strong>${t.labelCheckin}</strong> ${checkinDate}</p>
+            <p><strong>${t.labelCheckout}</strong> ${checkoutDate}</p>
+            <p><strong>${t.labelRoom}</strong> ${data.room}</p>`;
+        } else {
+          document.getElementById("guestInfo").innerText = t.notfound;
+        }
+      })
+      .catch(() => {
+        document.getElementById("guestInfo").innerText = translations[lang].network;
+      });
+
+    document.getElementById("checkinForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      formData.append("name", name);
+      formData.append("booking", booking);
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: formData,
+        redirect: "follow"
+      })
+        .then(res => res.text())
+        .then(res => {
+          if (res === "RECEIVED") {
+            document.getElementById("message").innerText = translations[lang].success;
+            setTimeout(() => {
+              window.location.href = "https://wiseowlhostels.com/kyoto/";
+            }, 3000);
+          } else {
+            document.getElementById("message").innerText = translations[lang].fail;
+          }
+        })
+        .catch(() => {
+          document.getElementById("message").innerText = translations[lang].network;
+        });
+    });
+  </script>
+</body>
+</html>
+
