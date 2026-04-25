@@ -395,54 +395,26 @@
         countryJapan: "Japan", countryUSA: "USA", countryChina: "China", countryGermany: "Germany", countryFrance: "France", countryTaiwan: "Taiwan", countryKorea: "South Korea", countryItaly: "Italy", countrySwitzerland: "Switzerland", countryRussia: "Russia", countryThailand: "Thailand", countryVietnam: "Vietnam",
         genderMale: "Male", genderFemale: "Female", genderOther: "Other"
       },
-      es: {
-        formTitle: "Información de Check-in",
-        labelDob: "Fecha de nacimiento:", labelGender: "Género:", labelNationality: "Nacionalidad:", labelPrev: "Alojamiento anterior:", labelNext: "Próximo destino:",
-        submit: "Enviar", success: "Enviado correctamente. Redirigiendo...", labelName: "Nombre:", labelCode: "Código:",
-        labelCheckin: "Entrada:", labelCheckout: "Salida:", labelRoom: "Habitación:",
-        emptyNationality: "Seleccione", emptyGender: "Seleccione",
-        countryJapan: "Japón", countryUSA: "EE. UU.", countryChina: "China", countryGermany: "Alemania", countryFrance: "Francia", countryTaiwan: "Taiwán", countryKorea: "Corea del Sur", countryItaly: "Italia", countrySwitzerland: "Suiza", countryRussia: "Rusia", countryThailand: "Tailandia", countryVietnam: "Vietnam",
-        genderMale: "Hombre", genderFemale: "Mujer", genderOther: "Otro"
-      },
-      "zh-CN": {
-        formTitle: "入住信息",
-        labelDob: "出生日期:", labelGender: "性别:", labelNationality: "国籍:", labelPrev: "前一住宿地:", labelNext: "下一目的地:",
-        submit: "提交", success: "提交成功。正在跳转...", labelName: "姓名:", labelCode: "预订号码:",
-        labelCheckin: "入住日期:", labelCheckout: "退房日期:", labelRoom: "房型:",
-        emptyNationality: "请选择", emptyGender: "请选择",
-        countryJapan: "日本", countryUSA: "美国", countryChina: "中国", countryGermany: "德国", countryFrance: "法国", countryTaiwan: "台湾", countryKorea: "韩国", countryItaly: "意大利", countrySwitzerland: "瑞士", countryRussia: "俄罗斯", countryThailand: "泰国", countryVietnam: "越南",
-        genderMale: "男", genderFemale: "女", genderOther: "其他"
-      },
-      "zh-TW": {
-        formTitle: "入住資訊",
-        labelDob: "出生日期:", labelGender: "性別:", labelNationality: "國籍:", labelPrev: "前一住宿地:", labelNext: "下一目的地:",
-        submit: "送出", success: "提交成功。正在跳轉...", labelName: "姓名:", labelCode: "預訂編號:",
-        labelCheckin: "入住日期:", labelCheckout: "退房日期:", labelRoom: "房型:",
-        emptyNationality: "請選擇", emptyGender: "請選擇",
-        countryJapan: "日本", countryUSA: "美國", countryChina: "中國", countryGermany: "德國", countryFrance: "法國", countryTaiwan: "台灣", countryKorea: "韓國", countryItaly: "義大利", countrySwitzerland: "瑞士", countryRussia: "俄羅斯", countryThailand: "泰國", countryVietnam: "越南",
-        genderMale: "男", genderFemale: "女", genderOther: "其他"
-      },
-      ko: {
-        formTitle: "체크인 정보",
-        labelDob: "생년월일:", labelGender: "성별:", labelNationality: "국적:", labelPrev: "이전 숙소:", labelNext: "다음 목적지:",
-        submit: "제출", success: "제출 완료. 이동 중...", labelName: "이름:", labelCode: "예약 번호:",
-        labelCheckin: "체크인:", labelCheckout: "체크아웃:", labelRoom: "객실:",
-        emptyNationality: "선택하세요", emptyGender: "선택하세요",
-        countryJapan: "일본", countryUSA: "미국", countryChina: "중국", countryGermany: "독일", countryFrance: "프랑스", countryTaiwan: "대만", countryKorea: "대한민국", countryItaly: "이탈리아", countrySwitzerland: "스위스", countryRussia: "러시아", countryThailand: "태국", countryVietnam: "베트남",
-        genderMale: "남성", genderFemale: "여성", genderOther: "기타"
-      }
+      // ...（他言語は省略していますが、お手元のコードにあるものは残してください）...
     };
 
-    // URLパラメータから言語を取得
+    // 【追加】日付を綺麗にする関数
+    function formatDate(dateStr) {
+      if (!dateStr || dateStr === "N/A") return "N/A";
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}/${m}/${day}`;
+    }
+
     const params = new URLSearchParams(window.location.search);
     let currentLang = params.get("lang") || localStorage.getItem("lang") || "ja";
 
-    
-    // 言語を適用する関数
     function applyLanguage(lang) {
       const t = translations[lang] || translations["en"];
       
-      // ラベルの更新（ここも残しておいてください）
       document.getElementById("formTitle").innerText = t.formTitle;
       document.getElementById("labelDob").innerHTML = `<i class="fa-solid fa-cake-candles"></i>${t.labelDob}`;
       document.getElementById("labelGender").innerHTML = `<i class="fa-solid fa-venus-mars"></i>${t.labelGender}`;
@@ -452,19 +424,16 @@
       document.getElementById("submitBtn").innerText = t.submit;
       document.getElementById("languageSelect").value = lang;
 
-      // セレクトボックスの翻訳（ここもそのまま）
       document.querySelectorAll("option[data-i18n-option]").forEach(opt => {
         opt.innerText = t[opt.getAttribute("data-i18n-option")] || opt.innerText;
       });
       document.querySelector("#nationalitySelect option[value='']").innerText = t.emptyNationality;
       document.querySelector("#genderSelect option[value='']").innerText = t.emptyGender;
 
-      // 1. ここでデータを取得
       const savedData = JSON.parse(localStorage.getItem("temp_guest_data"));
       const savedName = localStorage.getItem("temp_guest_name");
       const savedBooking = localStorage.getItem("temp_guest_booking");
 
-      // 2. 日付を formatDate で囲む！
       if (savedData && savedName) {
         document.getElementById("guestInfo").innerHTML = `
           <p><strong>${t.labelName}</strong> <span>${savedName}</span></p>
@@ -475,24 +444,16 @@
           <p><strong>${t.labelRoom}</strong> <span>${savedData.room}</span></p>`;
       }
 
-      // Select2の再初期化
       $('#nationalitySelect').select2({ width: '100%', language: lang, placeholder: t.emptyNationality });
     }
 
-      // Select2の再初期化
-      $('#nationalitySelect').select2({ width: '100%', language: lang, placeholder: t.emptyNationality });
-    }
-
-    // 初回実行
     applyLanguage(currentLang);
 
-    // 言語切り替えボタンが押されたとき
     function setLanguage(l) {
       localStorage.setItem("lang", l);
       applyLanguage(l);
     }
 
-    // 送信処理（GASへPOST）
     const scriptURL = "https://script.google.com/macros/s/AKfycby2-TCHJJgwEJ_Ckmy5W4W5NEWrhu63z-6e1aodLnRmqYrucNsLJinVVniPExb2b98cJg/exec";
 
     document.getElementById("checkinForm").addEventListener("submit", function (e) {
