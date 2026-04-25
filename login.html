@@ -19,8 +19,8 @@
     .login-box {
       background-color: white;
       padding: 30px 40px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       width: 100%;
       max-width: 360px;
       box-sizing: border-box;
@@ -30,57 +30,70 @@
 
     .login-box h2 {
       margin-bottom: 20px;
+      color: #1e293b;
     }
 
     .login-box input,
     .login-box select,
     .login-box button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 15px;
-      border-radius: 5px;
+      border-radius: 8px;
       font-size: 16px;
       box-sizing: border-box;
     }
 
-    .login-box input,
-    .login-box select {
-      border: 1px solid #ccc;
+    .login-box input {
+      border: 1px solid #e2e8f0;
+      background-color: #f8fafc;
     }
 
     .login-box button {
-      background-color: blue;
+      background-color: #2563eb;
       color: white;
       border: none;
+      font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
     }
 
     .login-box button:hover {
-      background-color: darkblue;
+      background-color: #1d4ed8;
+    }
+
+    .login-box button:disabled {
+      background-color: #cbd5e1;
+      cursor: not-allowed;
     }
 
     .language-select {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       text-align: right;
     }
 
     .language-select select {
-      font-size: 14px;
-      padding: 4px 6px;
+      width: auto;
+      font-size: 13px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
     }
 
     #message {
-      color: red;
+      color: #ef4444;
       margin-top: 10px;
-      transition: opacity 0.3s ease;
+      font-size: 14px;
+      font-weight: bold;
+      min-height: 20px;
     }
 
     #spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid blue;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #2563eb;
       border-radius: 50%;
-      width: 30px;
-      height: 30px;
+      width: 24px;
+      height: 24px;
       animation: spin 1s linear infinite;
       margin: 10px auto;
       display: none;
@@ -104,6 +117,10 @@
       <select id="languageSelect" onchange="setLanguage(this.value)">
         <option value="ja">日本語</option>
         <option value="en">English</option>
+        <option value="de">Deutsch</option>
+        <option value="fr">Français</option>
+        <option value="ru">Русский</option>
+        <option value="pt">Português</option>
         <option value="es">Español</option>
         <option value="zh-CN">简体中文</option>
         <option value="zh-TW">繁體中文</option>
@@ -113,8 +130,8 @@
 
     <h2 id="title">ログイン</h2>
     <form id="loginForm">
-      <input type="text" id="guestName" placeholder="予約者名" required inputmode="text" autocomplete="name">
-      <input type="text" id="bookingCode" placeholder="予約番号" required inputmode="text" autocomplete="off" title="英数字・ハイフン・スペースで4～12文字">
+      <input type="text" id="guestName" placeholder="予約者名" required autocomplete="name">
+      <input type="text" id="bookingCode" placeholder="予約番号" required autocomplete="off">
       <button type="submit" id="loginBtn">ログイン</button>
     </form>
     <div id="spinner"></div>
@@ -123,66 +140,26 @@
 
   <script>
     const translations = {
-      ja: {
-        title: "ログイン",
-        name: "予約者名",
-        code: "予約番号",
-        button: "ログイン",
-        error: "予約情報が一致しませんでした。",
-        network: "通信エラーが発生しました。"
-      },
-      en: {
-        title: "Login",
-        name: "Guest Name",
-        code: "Booking Code",
-        button: "Login",
-        error: "Reservation not found.",
-        network: "Network error occurred."
-      },
-      es: {
-        title: "Iniciar sesión",
-        name: "Nombre del huésped",
-        code: "Código de reserva",
-        button: "Entrar",
-        error: "No se encontró la reserva.",
-        network: "Error de red."
-      },
-      "zh-CN": {
-        title: "登录",
-        name: "预订者姓名",
-        code: "预订号码",
-        button: "登录",
-        error: "未找到预订信息。",
-        network: "网络错误。"
-      },
-      "zh-TW": {
-        title: "登入",
-        name: "預訂者姓名",
-        code: "預訂編號",
-        button: "登入",
-        error: "找不到預訂資訊。",
-        network: "網路錯誤。"
-      },
-      ko: {
-        title: "로그인",
-        name: "예약자 이름",
-        code: "예약 번호",
-        button: "로그인",
-        error: "예약 정보를 찾을 수 없습니다.",
-        network: "네트워크 오류가 발생했습니다."
-      }
+      ja: { title: "ログイン", name: "予約者名", code: "予約番号", button: "ログイン", error: "予約情報が一致しませんでした。", network: "通信エラーが発生しました。" },
+      en: { title: "Login", name: "Guest Name", code: "Booking Code", button: "Login", error: "Reservation not found.", network: "Network error occurred." },
+      de: { title: "Anmelden", name: "Gastname", code: "Buchungscode", button: "Anmelden", error: "Reservierung nicht gefunden.", network: "Netzwerkfehler." },
+      fr: { title: "Connexion", name: "Nom du client", code: "Code de réservation", button: "Se connecter", error: "Réservation introuvable.", network: "Erreur réseau." },
+      ru: { title: "Вход", name: "Имя гостя", code: "Код бронирования", button: "Войти", error: "Бронирование не найдено.", network: "Ошибка сети." },
+      pt: { title: "Entrar", name: "Nome do hóspede", code: "Código de reserva", button: "Entrar", error: "Reserva não encontrada.", network: "Erro de rede." },
+      es: { title: "Iniciar sesión", name: "Nombre del huésped", code: "Código de reserva", button: "Entrar", error: "No se encontró la reserva.", network: "Error de red." },
+      "zh-CN": { title: "登录", name: "预订者姓名", code: "预订号码", button: "登录", error: "未找到预订信息。", network: "网络错误。" },
+      "zh-TW": { title: "登入", name: "預訂者姓名", code: "預訂編號", button: "登入", error: "找不到預訂資訊。", network: "網路錯誤。" },
+      ko: { title: "로그인", name: "예약자 이름", code: "예약 번호", button: "로그인", error: "예약 정보를 찾을 수 없습니다.", network: "네트워크 오류가 발생했습니다." }
     };
 
     let currentLang = localStorage.getItem("lang") || navigator.language || "ja";
     if (!translations[currentLang]) {
-      currentLang = currentLang.startsWith("zh") ? "zh-CN" :
-                    currentLang.startsWith("es") ? "es" :
-                    currentLang.startsWith("ko") ? "ko" : "en";
+      currentLang = currentLang.startsWith("zh") ? "zh-CN" : "en";
     }
 
     function applyLanguage(lang) {
-      const t = translations[lang];
-      document.title = t.title + " - Check-in";
+      const t = translations[lang] || translations["en"];
+      document.title = t.title + " - Smart Check-in";
       document.getElementById("title").innerText = t.title;
       document.getElementById("guestName").placeholder = t.name;
       document.getElementById("bookingCode").placeholder = t.code;
@@ -198,36 +175,33 @@
 
     applyLanguage(currentLang);
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzgCJ7kq7FVpZ0Ly_JslPDwBxHWHli2ecvH4OJjWMhIYHErz5Fh056Nagycfb-Nm-u6RQ/exec";
+    // ★修正後のGASのURLをここに貼ってください
+    const scriptURL = "https://script.google.com/macros/s/AKfycby2-TCHJJgwEJ_Ckmy5W4W5NEWrhu63z-6e1aodLnRmqYrucNsLJinVVniPExb2b98cJg/exec";
 
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const name = normalizeName(document.getElementById("guestName").value);
-      const booking = normalizeBookingCode(document.getElementById("bookingCode").value);
+      
+      const rawName = document.getElementById("guestName").value;
+      const rawCode = document.getElementById("bookingCode").value;
+      
+      const name = normalizeName(rawName);
+      const booking = normalizeBookingCode(rawCode);
 
-      const bookingPattern = /^[A-Za-z0-9\- ]{4,12}$/;
-      if (!bookingPattern.test(booking)) {
-        showMessage(translations[currentLang].code + "：正しい形式で入力してください（例：ABC123 または AB-1234）。");
-        return;
-      }
+      if (!name || !booking) return;
 
       document.getElementById("loginBtn").disabled = true;
       document.getElementById("loginBtn").innerText = "Loading...";
       document.getElementById("spinner").style.display = "block";
+      document.getElementById("message").innerText = "";
 
       fetch(`${scriptURL}?name=${encodeURIComponent(name)}&booking=${encodeURIComponent(booking)}`)
         .then(res => res.json())
-       .then(data => {
+        .then(data => {
           if (data.result === "OK") {
-            // ここでデータをブラウザに一時保存する
             localStorage.setItem("temp_guest_data", JSON.stringify(data));
-            localStorage.setItem("temp_guest_name", name);
+            localStorage.setItem("temp_guest_name", rawName.trim()); // 表示用に元の名前（スペースあり）を保存
             localStorage.setItem("temp_guest_booking", booking);
-
-            const params = new URLSearchParams({
-              lang: currentLang
-            });
-            window.location.href = `checkin.html?${params.toString()}`;
+            window.location.href = `checkin.html?lang=${currentLang}`;
           } else {
             showMessage(translations[currentLang].error);
           }
@@ -237,30 +211,30 @@
           showMessage(translations[currentLang].network);
         })
         .finally(() => {
-          // ここでボタンの状態を元に戻す処理が必要です
           document.getElementById("loginBtn").disabled = false;
           document.getElementById("loginBtn").innerText = translations[currentLang].button;
           document.getElementById("spinner").style.display = "none";
         });
-    }); // ← ここで addEventListener を閉じる
+    });
 
     function showMessage(msg) {
       const m = document.getElementById("message");
       m.innerText = msg;
       m.style.opacity = 1;
-      setTimeout(() => {
-        m.style.opacity = 0;
-        setTimeout(() => m.innerText = "", 500);
-      }, 4000);
+      setTimeout(() => { m.style.opacity = 0; }, 4000);
     }
 
+    // 名前から全ての空白を除去して小文字にする（GASと合わせる）
     function normalizeName(name) {
-      return name.trim().replace(/\s+/g, " ").toLowerCase();
+      return name.replace(/　/g, "").replace(/\s+/g, "").toLowerCase();
     }
 
+    // 予約番号から全角を除去し空白を消す
     function normalizeBookingCode(code) {
       return code.replace(/[Ａ-Ｚａ-ｚ０-９]/g, s =>
-        String.fromCharCode(s.charCodeAt(0) - 0xFEE0)).trim();
+        String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+        .replace(/\s+/g, "")
+        .toUpperCase(); // 予約番号は大文字で統一
     }
   </script>
 </body>
