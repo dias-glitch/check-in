@@ -437,11 +437,12 @@
     const params = new URLSearchParams(window.location.search);
     let currentLang = params.get("lang") || localStorage.getItem("lang") || "ja";
 
+    
     // 言語を適用する関数
     function applyLanguage(lang) {
       const t = translations[lang] || translations["en"];
       
-      // 各ラベルの更新
+      // ラベルの更新（ここも残しておいてください）
       document.getElementById("formTitle").innerText = t.formTitle;
       document.getElementById("labelDob").innerHTML = `<i class="fa-solid fa-cake-candles"></i>${t.labelDob}`;
       document.getElementById("labelGender").innerHTML = `<i class="fa-solid fa-venus-mars"></i>${t.labelGender}`;
@@ -451,27 +452,32 @@
       document.getElementById("submitBtn").innerText = t.submit;
       document.getElementById("languageSelect").value = lang;
 
-      // セレクトボックスの翻訳
+      // セレクトボックスの翻訳（ここもそのまま）
       document.querySelectorAll("option[data-i18n-option]").forEach(opt => {
         opt.innerText = t[opt.getAttribute("data-i18n-option")] || opt.innerText;
       });
       document.querySelector("#nationalitySelect option[value='']").innerText = t.emptyNationality;
       document.querySelector("#genderSelect option[value='']").innerText = t.emptyGender;
 
-      // 【修正ポイント】予約情報も現在の言語で再表示
+      // 1. ここでデータを取得
       const savedData = JSON.parse(localStorage.getItem("temp_guest_data"));
       const savedName = localStorage.getItem("temp_guest_name");
       const savedBooking = localStorage.getItem("temp_guest_booking");
 
+      // 2. 日付を formatDate で囲む！
       if (savedData && savedName) {
         document.getElementById("guestInfo").innerHTML = `
           <p><strong>${t.labelName}</strong> <span>${savedName}</span></p>
           <hr style="border:0; border-top:1px solid #e2e8f0; margin:10px 0;">
           <p><strong>${t.labelCode}</strong> <span>${savedBooking}</span></p>
-          <p><strong>${t.labelCheckin}</strong> <span>${savedData.checkin}</span></p>
-          <p><strong>${t.labelCheckout}</strong> <span>${savedData.checkout}</span></p>
+          <p><strong>${t.labelCheckin}</strong> <span>${formatDate(savedData.checkin)}</span></p>
+          <p><strong>${t.labelCheckout}</strong> <span>${formatDate(savedData.checkout)}</span></p>
           <p><strong>${t.labelRoom}</strong> <span>${savedData.room}</span></p>`;
       }
+
+      // Select2の再初期化
+      $('#nationalitySelect').select2({ width: '100%', language: lang, placeholder: t.emptyNationality });
+    }
 
       // Select2の再初期化
       $('#nationalitySelect').select2({ width: '100%', language: lang, placeholder: t.emptyNationality });
