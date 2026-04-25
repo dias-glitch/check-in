@@ -121,13 +121,17 @@
     <div class="language-header">
       <i class="fa-solid fa-globe" style="margin-right: 8px;"></i>
       <select id="languageSelect" onchange="setLanguage(this.value)">
-        <option value="ja">日本語</option>
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="zh-CN">简体中文</option>
-        <option value="zh-TW">繁體中文</option>
-        <option value="ko">한국어</option>
-      </select>
+  <option value="ja">日本語</option>
+  <option value="en">English</option>
+  <option value="de">Deutsch</option>
+  <option value="fr">Français</option>
+  <option value="ru">Русский</option>
+  <option value="pt">Português</option>
+  <option value="es">Español</option>
+  <option value="zh-CN">简体中文</option>
+  <option value="zh-TW">繁體中文</option>
+  <option value="ko">한국어</option>
+</select>
     </div>
 
     <h2 id="formTitle">Check-in</h2>
@@ -375,11 +379,11 @@
   </div>
 
   <script>
-    // 1. 全言語の翻訳データ
+  // 1. 全言語の翻訳データ（修正版）
     const translations = {
       ja: {
         formTitle: "チェックイン情報",
-        labelDob: "生年月日:", labelGender: "性別:", labelNationality: "国籍:", labelPrev: "前泊地:", labelNext: "後泊地:",labelPrev: "電話番号:",labelPrev: "メールアドレス:",
+        labelDob: "生年月日:", labelGender: "性別:", labelNationality: "国籍:", labelPrev: "前泊地:", labelNext: "後泊地:", labelPhone: "電話番号:", labelEmail: "メールアドレス:",
         submit: "送信", success: "送信完了。転送します...", labelName: "名前:", labelCode: "予約番号:",
         labelCheckin: "到着日:", labelCheckout: "出発日:", labelRoom: "部屋:",
         emptyNationality: "選択してください", emptyGender: "選択してください",
@@ -388,16 +392,59 @@
       },
       en: {
         formTitle: "Check-in Information",
-        labelDob: "Date of Birth:", labelGender: "Gender:", labelNationality: "Nationality:", labelPrev: "Previous Stay:", labelNext: "Next Destination:",labelPrev: "Phone number:",labelPrev: "Mail adress:",
+        labelDob: "Date of Birth:", labelGender: "Gender:", labelNationality: "Nationality:", labelPrev: "Previous Stay:", labelNext: "Next Destination:", labelPhone: "Phone number:", labelEmail: "Email address:",
         submit: "Submit", success: "Success! Redirecting...", labelName: "Name:", labelCode: "Booking No:",
         labelCheckin: "Check-in:", labelCheckout: "Check-out:", labelRoom: "Room:",
         emptyNationality: "Please select", emptyGender: "Please select",
         countryJapan: "Japan", countryUSA: "USA", countryChina: "China", countryGermany: "Germany", countryFrance: "France", countryTaiwan: "Taiwan", countryKorea: "South Korea", countryItaly: "Italy", countrySwitzerland: "Switzerland", countryRussia: "Russia", countryThailand: "Thailand", countryVietnam: "Vietnam",
         genderMale: "Male", genderFemale: "Female", genderOther: "Other"
       },
-      // ...（他言語は省略していますが、お手元のコードにあるものは残してください）...
+      de: { // ドイツ語
+        formTitle: "Check-in Informationen",
+        labelDob: "Geburtsdatum:", labelGender: "Geschlecht:", labelNationality: "Nationalität:", labelPrev: "Vorheriger Ort:", labelNext: "Nächstes Ziel:", labelPhone: "Telefonnummer:", labelEmail: "E-Mail-Adresse:",
+        submit: "Absenden", success: "Erfolgreich! Weiterleitung...", labelName: "Name:", labelCode: "Buchungsnummer:",
+        labelCheckin: "Check-in:", labelCheckout: "Check-out:", labelRoom: "Zimmer:",
+        emptyNationality: "Bitte auswählen", emptyGender: "Bitte auswählen",
+        countryJapan: "Japan", countryUSA: "USA", countryChina: "China", countryGermany: "Deutschland", countryFrance: "Frankreich", countryTaiwan: "Taiwan", countryKorea: "Südkorea", countryItaly: "Italien", countrySwitzerland: "Schweiz", countryRussia: "Russland", countryThailand: "Thailand", countryVietnam: "Vietnam",
+        genderMale: "Männlich", genderFemale: "Weiblich", genderOther: "Andere"
+      },
+      fr: { // フランス語
+        formTitle: "Informations d'enregistrement",
+        labelDob: "Date de naissance:", labelGender: "Genre:", labelNationality: "Nationalité:", labelPrev: "Lieu précédent:", labelNext: "Prochaine destination:", labelPhone: "Numéro de téléphone:", labelEmail: "Adresse e-mail:",
+        submit: "Envoyer", success: "Succès! Redirection...", labelName: "Nom:", labelCode: "N° de réservation:",
+        labelCheckin: "Arrivée:", labelCheckout: "Départ:", labelRoom: "Chambre:",
+        emptyNationality: "Veuillez choisir", emptyGender: "Veuillez choisir",
+        countryJapan: "Japon", countryUSA: "États-Unis", countryChina: "Chine", countryGermany: "Allemagne", countryFrance: "France", countryTaiwan: "Taïwan", countryKorea: "Corée du Sud", countryItaly: "Italie", countrySwitzerland: "Suisse", countryRussia: "Russie", countryThailand: "Thaïlande", countryVietnam: "Vietnam",
+        genderMale: "Homme", genderFemale: "Femme", genderOther: "Autre"
+      },
+      ru: { // ロシア語
+        formTitle: "Информация для регистрации",
+        labelDob: "Дата рождения:", labelGender: "Пол:", labelNationality: "Гражданство:", labelPrev: "Предыдущее место:", labelNext: "Следующий пункт:", labelPhone: "Номер телефона:", labelEmail: "Эл. почта:",
+        submit: "Отправить", success: "Успешно! Перенаправление...", labelName: "Имя:", labelCode: "№ брони:",
+        labelCheckin: "Заезд:", labelCheckout: "Выезд:", labelRoom: "Номер:",
+        emptyNationality: "Выберите", emptyGender: "Выберите",
+        countryJapan: "Япония", countryUSA: "США", countryChina: "Китай", countryGermany: "Германия", countryFrance: "Франция", countryTaiwan: "Тайвань", countryKorea: "Южная Корея", countryItaly: "Италия", countrySwitzerland: "Швейцария", countryRussia: "Россия", countryThailand: "Таиланд", countryVietnam: "Вьетнам",
+        genderMale: "Мужской", genderFemale: "Женский", genderOther: "Другое"
+      },
+      pt: { // ポルトガル語
+        formTitle: "Informações de Check-in",
+        labelDob: "Data de nascimento:", labelGender: "Gênero:", labelNationality: "Nacionalidade:", labelPrev: "Local anterior:", labelNext: "Próximo destino:", labelPhone: "Telefone:", labelEmail: "E-mail:",
+        submit: "Enviar", success: "Sucesso! Redirecionando...", labelName: "Nome:", labelCode: "Nº reserva:",
+        labelCheckin: "Entrada:", labelCheckout: "Saída:", labelRoom: "Quarto:",
+        emptyNationality: "Por favor selecione", emptyGender: "Por favor selecione",
+        countryJapan: "Japão", countryUSA: "EUA", countryChina: "China", countryGermany: "Alemanha", countryFrance: "França", countryTaiwan: "Taiwan", countryKorea: "Coreia do Sul", countryItaly: "Itália", countrySwitzerland: "Suíça", countryRussia: "Rússia", countryThailand: "Tailândia", countryVietnam: "Vietnã",
+        genderMale: "Masculino", genderFemale: "Feminino", genderOther: "Outro"
+      },
+      es: { // スペイン語（参考までに含めています）
+        formTitle: "Información de Check-in",
+        labelDob: "Fecha de nacimiento:", labelGender: "Género:", labelNationality: "Nacionalidad:", labelPrev: "Lugar anterior:", labelNext: "Próximo destino:", labelPhone: "Teléfono:", labelEmail: "Correo electrónico:",
+        submit: "Enviar", success: "¡Éxito! Redirigiendo...", labelName: "Nombre:", labelCode: "Código:",
+        labelCheckin: "Entrada:", labelCheckout: "Salida:", labelRoom: "Habitación:",
+        emptyNationality: "Seleccione", emptyGender: "Seleccione",
+        countryJapan: "Japón", countryUSA: "EE. UU.", countryChina: "China", countryGermany: "Alemania", countryFrance: "Francia", countryTaiwan: "Taiwán", countryKorea: "Corea del Sur", countryItaly: "Italia", countrySwitzerland: "Suiza", countryRussia: "Rusia", countryThailand: "Tailandia", countryVietnam: "Vietnam",
+        genderMale: "Hombre", genderFemale: "Mujer", genderOther: "Otro"
+      }
     };
-
     // 【追加】日付を綺麗にする関数
     function formatDate(dateStr) {
       if (!dateStr || dateStr === "N/A") return "N/A";
@@ -423,6 +470,8 @@
       document.getElementById("labelNext").innerHTML = `<i class="fa-solid fa-plane-departure"></i>${t.labelNext}`;
       document.getElementById("submitBtn").innerText = t.submit;
       document.getElementById("languageSelect").value = lang;
+      document.getElementById("labelPhone").innerHTML = `<i class="fa-solid fa-phone"></i>${t.labelPhone}`;
+      document.getElementById("labelEmail").innerHTML = `<i class="fa-solid fa-envelope"></i>${t.labelEmail}`;
 
       document.querySelectorAll("option[data-i18n-option]").forEach(opt => {
         opt.innerText = t[opt.getAttribute("data-i18n-option")] || opt.innerText;
